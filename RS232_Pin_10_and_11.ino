@@ -32,6 +32,7 @@ void loop() {
 //    //Serial.write(mySerial.read());
 //  if (Serial.available())
 //   // mySerial.write(Serial.read());
+uint8_t shift = 0;
 uint8_t count = 0;
 unsigned long timeNow = millis();
 String myStr = String(count, 5); //Here I define the length of string of number, this case put 5 spaces which will be occupied by the number!
@@ -51,15 +52,21 @@ timeNow = millis();
     if (ledState == LOW)
     {
       ledState = HIGH;
-      mySerial.write(0x0b); //Initial cursor
-      mySerial.print(myString);
+      mySerial.print("                                        "); //Send 40 spaces!
     }
     else
     {
       ledState = LOW;
-      mySerial.write(0x1b); //
-      mySerial.write(0x40); //
-      mySerial.print("Hi Folks! (............................)");    //
+      mySerial.write(0x1b); // 
+      mySerial.write(0x40); // mySerial.write(0x44);//Write continuous
+      switch (shift){
+        case 0: shift++; mySerial.print("012356789ABCDEFGHIJKLMNOPQRSTUVXZW"); 
+        break; 
+        case 1: shift++; mySerial.write(0x0b); /*Initial cursor*/ mySerial.print(myString);  
+        break; 
+        case 2: shift=0; mySerial.print("Hi Folks!                               "); 
+        break;
+      }    
       count++;
     }
     digitalWrite(LED_PIN, ledState);
